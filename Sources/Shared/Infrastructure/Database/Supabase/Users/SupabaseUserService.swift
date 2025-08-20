@@ -30,11 +30,12 @@ public final class SupabaseUserService: @unchecked Sendable {
         
         // ✅ Fix: Custom date decoding for ISO8601 + fractional seconds
         let decoder = JSONDecoder()
-        let formatter = ISO8601DateFormatter()
-        formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
+        
         decoder.dateDecodingStrategy = .custom { decoder in
             let container = try decoder.singleValueContainer()
             let dateStr = try container.decode(String.self)
+            let formatter = ISO8601DateFormatter()
+            formatter.formatOptions = [.withInternetDateTime, .withFractionalSeconds]
             guard let date = formatter.date(from: dateStr) else {
                 throw DecodingError.dataCorruptedError(
                     in: container,
@@ -44,17 +45,25 @@ public final class SupabaseUserService: @unchecked Sendable {
             return date
         }
         
-        return try decoder.decode([User].self, from: data).first
+        let persistenceModel = try decoder.decode([UserPersistenceModel].self, from: data).first
+        
+        do {
+              return try persistenceModel?.toDomainEntity()
+          } catch {
+              throw SupabaseError.dataCorruption(underlying: error)
+          }
     }
 
-    public func updateUser(auth0Id: String, name: String?, email: String?) async throws -> Bool {
-    let body = UserUpdateBody(name: name, email: email)
-    let (_, response) = try await client.request(
-        path: "users",
-        method: "PATCH",
-        query: "auth0_id=eq.\(auth0Id)",
-        body: body
-    )
+    public func updateUser(_ user: User) async throws -> Bool {
+        let persistenceModel = UserPersistenceModel.fromDomainEntity(user)
+        let body = UserUpdateBody(name: persistenceModel.name, email: persistenceModel.email)
+        
+        let (_, response) = try await client.request(
+            path: "users",
+            method: "PATCH",
+            query: "auth0_id=eq.\(persistenceModel.auth0_id)",
+            body: body
+        )
     return response.statusCode == 200 || response.statusCode == 204
 }
 
