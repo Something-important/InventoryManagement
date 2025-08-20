@@ -1,0 +1,13 @@
+.DS_Store
+/.build
+/Packages
+/*.xcodeproj
+xcuserdata/
+DerivedData/
+.swiftpm/
+.netrc
+
+# Environment files
+.env
+.env.*
+!.env.example 
