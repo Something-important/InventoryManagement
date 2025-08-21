@@ -30,6 +30,6 @@ source .env && env SUPABASE_URL="$SUPABASE_URL" SUPABASE_SERVICE_KEY="$SUPABASE_
 
 source .env && env SUPABASE_URL="$SUPABASE_URL" SUPABASE_SERVICE_KEY="$SUPABASE_SERVICE_KEY" swift test --filter SupabaseUserServiceTests
 
-source .env && env AUTH0_ISSUER="$AUTH0_ISSUER" swift test --filter Auth0TokenDecoderTests
+source .env && env AUTH0_ISSUER="$AUTH0_ISSUER" swift test --filter Auth0TokenValidationTests
 
-source .env && env AUTH0_ISSUER="$AUTH0_ISSUER" SUPABASE_URL="$SUPABASE_URL" SUPABASE_SERVICE_KEY="$SUPABASE_SERVICE_KEY" swift test --filter Auth0SupabaseIntegrationTests
+source .env && env AUTH0_ISSUER="$AUTH0_ISSUER" SUPABASE_URL="$SUPABASE_URL" SUPABASE_SERVICE_KEY="$SUPABASE_SERVICE_KEY" swift test --filter Auth0UserIntegrationTests

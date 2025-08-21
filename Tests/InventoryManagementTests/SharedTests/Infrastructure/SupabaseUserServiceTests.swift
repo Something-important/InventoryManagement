@@ -59,9 +59,9 @@ final class SupabaseUserServiceTests: XCTestCase {
         XCTAssertEqual(fetchedUser?.profile.email, updatedEmail)
         
         // 5️⃣ DELETE user
-//        let deleted = try await userService.deleteUser(auth0Id: testAuth0Id)
-//        print("🗑 deleteUser() returned:", deleted)
-//        XCTAssertTrue(deleted)
+       let deleted = try await userService.deleteUser(auth0Id: testAuth0Id)
+       print("🗑 deleteUser() returned:", deleted)
+       XCTAssertTrue(deleted)
         
         // 6️⃣ FETCH after delete
         fetchedUser = try await userService.fetchUser(byAuth0Id: testAuth0Id)

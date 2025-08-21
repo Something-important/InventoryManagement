@@ -11,12 +11,14 @@ import JWTKit
 actor Auth0TokenVerifier: TokenVerifierProtocol {
     let issuer: String
     private var jwksKeys: [String: JWTKit.JWK] = [:]
+    private var currentDate: Date  // Add this for testing
     
-    init() {
+    init(currentDate: Date = Date()) {  // Add date parameter with default
         guard let issuer = ProcessInfo.processInfo.environment["AUTH0_ISSUER"] else {
             fatalError("Auth0 configuration missing. Please set AUTH0_ISSUER environment variable.")
         }
         self.issuer = issuer
+        self.currentDate = currentDate
     }
     
     func verify(_ token: AuthenticationToken) async throws -> User {
@@ -49,7 +51,11 @@ actor Auth0TokenVerifier: TokenVerifierProtocol {
         try signers.use(jwk: jwk)
         
         // Verify the token signature
-        _ = try signers.verify(token.value, as: Auth0Payload.self)
+        do {
+            _ = try signers.verify(token.value, as: Auth0Payload.self)
+        } catch {
+            throw TokenError.signatureInvalid
+        }
         
         // Parse payload for validation
         guard let payload = try? JSONSerialization.jsonObject(with: payloadData) as? [String: Any] else {
@@ -107,7 +113,7 @@ actor Auth0TokenVerifier: TokenVerifierProtocol {
         if iss != issuer {
             throw TokenError.issuerMismatch
         }
-        if Date().timeIntervalSince1970 > exp {
+        if currentDate.timeIntervalSince1970 > exp {  // Use currentDate instead of Date()
             throw TokenError.tokenExpired
         }
     }
@@ -168,7 +174,7 @@ struct JWK: Codable {
     let e: String
 }
 
-enum TokenError: Error {
+enum TokenError: Error, Equatable {
     case invalidFormat
     case invalidBase64
     case invalidHeader
