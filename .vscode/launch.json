@@ -1,0 +1,22 @@
+{
+    "configurations": [
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:InventoryManagement}",
+            "name": "Debug InventoryManagementTests",
+            "program": "${workspaceFolder:InventoryManagement}/.build/debug/InventoryManagementTests",
+            "preLaunchTask": "swift: Build Debug InventoryManagementTests"
+        },
+        {
+            "type": "swift",
+            "request": "launch",
+            "args": [],
+            "cwd": "${workspaceFolder:InventoryManagement}",
+            "name": "Release InventoryManagementTests",
+            "program": "${workspaceFolder:InventoryManagement}/.build/release/InventoryManagementTests",
+            "preLaunchTask": "swift: Build Release InventoryManagementTests"
+        }
+    ]
+}

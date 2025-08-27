@@ -14,14 +14,12 @@ let package = Package(
         ),
     ],
     dependencies: [
-        .package(url: "https://github.com/vapor/jwt-kit.git", from: "4.0.0")
+        .package(url: "https://github.com/supabase-community/supabase-swift.git", from: "2.0.0")
     ],
     targets: [
         .target(
             name: "InventoryManagement",
-            dependencies: [
-                .product(name: "JWTKit", package: "jwt-kit")
-            ],
+            dependencies: [],
             path: "Sources"
         ),
         .testTarget(
